@@ -41,7 +41,7 @@
         <mxCell id="rl-extid" value="ExternalId : varchar (nullable)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="rl-header" vertex="1">
           <mxGeometry y="194" width="280" height="26" as="geometry"/>
         </mxCell>
-        <mxCell id="rl-fk" value="🔗 NearestMoonPhaseId : int (FK, nullable)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontStyle=1;fontColor=#d6b656;" parent="rl-header" vertex="1">
+        <mxCell id="rl-fk" value="🔗 MoonPhaseId : int (FK, nullable)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=10;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontStyle=1;fontColor=#d6b656;" parent="rl-header" vertex="1">
           <mxGeometry y="220" width="280" height="26" as="geometry"/>
         </mxCell>
 
@@ -108,7 +108,7 @@
             <mxPoint x="490" y="184" as="targetPoint"/>
           </mxGeometry>
         </mxCell>
-        <mxCell id="rel-fk-label" value="N : 1&#xa;NearestMoonPhaseId" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;fontColor=#d6b656;" parent="rel-fk-main" vertex="1" connectable="0">
+        <mxCell id="rel-fk-label" value="N : 1&#xa;MoonPhaseId" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontStyle=1;fontColor=#d6b656;" parent="rel-fk-main" vertex="1" connectable="0">
           <mxGeometry x="-0.1" y="-1" relative="1" as="geometry">
             <mxPoint y="-21" as="offset"/>
           </mxGeometry>

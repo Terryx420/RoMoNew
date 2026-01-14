@@ -38,7 +38,7 @@ public class RocketLaunch
     public string? ExternalId { get; set; }
 
     /// <summary>
-    /// Fremdschlüssel zur nächsten Mondphase (N:1 Beziehung)
+    /// Fremdschlüssel zur Mondphase (N:1 Beziehung)
     /// </summary>
-    public int? NearestMoonPhaseId { get; set; }
+    public int? MoonPhaseId { get; set; }
 }
