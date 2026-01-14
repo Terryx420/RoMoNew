@@ -1,4 +1,3 @@
-using RoMo.Server.DTOs;
 namespace RoMo.Server.DTOs;
 
 /// <summary>

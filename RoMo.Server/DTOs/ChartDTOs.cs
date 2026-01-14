@@ -1,4 +1,4 @@
-namespace RocketMoonApp.DTOs;
+namespace RoMo.Server.DTOs;
 
 /// <summary>
 /// BarChart Data: Erfolgsrate pro Mondphase

@@ -14,10 +14,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add Controllers
 builder.Services.AddControllers();
 
-// Add Swagger (nur für Development)
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
 // Add DbContext with SQLite (DB liegt neben .exe!)
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=rocketmoon.db"));
@@ -67,12 +63,6 @@ using (var scope = app.Services.CreateScope())
 // Middleware Pipeline
 // ==========================================
 
-// Swagger nur in Development
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
 
 app.UseCors("AllowAll");
 
@@ -93,7 +83,7 @@ app.MapFallbackToFile("index.html");
 
 
 var appUrl = "http://localhost:5000";
-string frontendUrl = "http://localhost:5173";
+string frontendUrl = "http://localhost:54231";
 
 Console.WriteLine("╔══════════════════════════════════════════╗");
 Console.WriteLine("║   🚀 RocketMoon App 🌙                  ║");
@@ -104,18 +94,18 @@ Console.WriteLine($"🌐 Browser öffnet automatisch...");
 Console.WriteLine();
 
 // Öffne Browser automatisch
-Task.Run(async () =>
+await Task.Run(async () =>
 {
     await Task.Delay(1500); // Warte kurz bis Server bereit
     try
     {
-        OpenBrowser(appUrl);
+        OpenBrowser(frontendUrl);
         Console.WriteLine("✅ Browser geöffnet!");
     }
     catch (Exception ex)
     {
         Console.WriteLine($"⚠️ Browser konnte nicht automatisch geöffnet werden: {ex.Message}");
-        Console.WriteLine($"   Öffne manuell: {appUrl}");
+        Console.WriteLine($"   Öffne manuell: {frontendUrl}");
     }
 });
 
