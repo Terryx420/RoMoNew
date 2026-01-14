@@ -90,11 +90,11 @@ export const MoonPhaseSuccessChart: React.FC<{ year: number }> = ({ year }) => {
   }
 
   return (
-    <div style={{ width: '100%', padding: '20px' }}>
+    <div style={{ width: '100%', padding: '20px', boxSizing: 'border-box' }}>
       <h2 style={{ marginBottom: '20px', textAlign: 'center' }}>
         Erfolgsrate nach Mondphase ({year})
       </h2>
-      <ResponsiveContainer width="100%" height={400}>
+      <ResponsiveContainer width="100%" height={400} style={{ maxWidth: '100%' }}>
         <BarChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis 

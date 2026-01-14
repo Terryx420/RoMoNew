@@ -87,11 +87,11 @@ export const LaunchTimelineChart: React.FC<{ year: number }> = ({ year }) => {
   }
 
   return (
-    <div style={{ width: '100%', padding: '20px' }}>
+    <div style={{ width: '100%', padding: '20px', boxSizing: 'border-box' }}>
       <h2 style={{ marginBottom: '20px', textAlign: 'center' }}>
         Raketen-Starts pro Monat ({year})
       </h2>
-      <ResponsiveContainer width="100%" height={400}>
+      <ResponsiveContainer width="100%" height={400} style={{ maxWidth: '100%' }}>
         <LineChart 
           data={data}
           margin={{ top: 5, right: 60, left: 20, bottom: 5 }}
