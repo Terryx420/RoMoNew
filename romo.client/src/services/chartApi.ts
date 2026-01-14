@@ -5,10 +5,13 @@ import type {
   LaunchTimelineChartDTO
 } from '../types/chart.types';
 
-// Backend URL - Automatische Erkennung
-const API_BASE_URL = 'http://localhost:5181/api';
+// Backend URL - Automatische Erkennung (Dev vs Production)
+const isDevelopment = window.location.port === '5173';
+const API_BASE_URL = isDevelopment
+  ? 'http://localhost:5181/api'  // Development: Vite + separate Backend
+  : '/api';                       // Production: Same server (single .exe)
 
-console.log('🔧 API Base URL:', API_BASE_URL);
+console.log('🔧 API Base URL:', API_BASE_URL, isDevelopment ? '(Development)' : '(Production)');
 
 /**
  * Simple fetch wrapper - KISS!

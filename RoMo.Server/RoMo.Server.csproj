@@ -4,9 +4,14 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+
+    <!-- Single-file executable settings -->
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+
+    <!-- Frontend path -->
     <SpaRoot>..\romo.client</SpaRoot>
-    <SpaProxyLaunchCommand>npm run dev</SpaProxyLaunchCommand>
-    <SpaProxyServerUrl>https://localhost:54231</SpaProxyServerUrl>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,14 +20,19 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
 
+  <!-- Build Frontend before Publish -->
+  <Target Name="BuildFrontend" BeforeTargets="Build" Condition="'$(Configuration)' == 'Release'">
+    <Message Importance="high" Text="🔧 Building Frontend (npm run build)..." />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build" />
+    <Message Importance="high" Text="✅ Frontend build complete!" />
+  </Target>
+
+  <!-- Include wwwroot in publish -->
   <ItemGroup>
-    <ProjectReference Include="..\romo.client\romo.client.esproj">
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
+    <Content Include="wwwroot\**" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>
-

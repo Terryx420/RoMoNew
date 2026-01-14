@@ -11,6 +11,11 @@ export default defineConfig({
             '@': fileURLToPath(new URL('./src', import.meta.url))
         }
     },
+    // Build output goes to backend's wwwroot for single-exe deployment
+    build: {
+        outDir: '../RoMo.Server/wwwroot',
+        emptyOutDir: true
+    },
     server: {
         port: parseInt(env.DEV_SERVER_PORT || '5173'),
     }

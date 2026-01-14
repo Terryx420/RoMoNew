@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Romo.Server.Services;
 using RoMo.Server.Data;
 using RoMo.Server.Services;
@@ -11,23 +11,22 @@ var builder = WebApplication.CreateBuilder(args);
 // Services Configuration
 // ==========================================
 
-// Add Controllers
 builder.Services.AddControllers();
 
-// Add DbContext with SQLite (DB liegt neben .exe!)
+// SQLite Database (neben der .exe)
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=rocketmoon.db"));
 
-// Add HttpClient für API Calls
+// HttpClient für externe APIs
 builder.Services.AddHttpClient<RocketLaunchService>();
 builder.Services.AddHttpClient<MoonDataService>();
 
-// Add Services
+// Services
 builder.Services.AddScoped<RocketLaunchService>();
 builder.Services.AddScoped<MoonDataService>();
 builder.Services.AddScoped<ChartAnalysisService>();
 
-// Add CORS (für standalone wichtig!)
+// CORS (nur für Development mit separatem Vite-Server)
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -36,13 +35,6 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod()
               .AllowAnyHeader();
     });
-});
-
-// Add Logging
-builder.Services.AddLogging(logging =>
-{
-    logging.AddConsole();
-    logging.SetMinimumLevel(LogLevel.Information);
 });
 
 var app = builder.Build();
@@ -55,7 +47,7 @@ Console.WriteLine("🚀 Initializing RocketMoon Database...");
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.EnsureCreated(); // Erstellt DB falls nicht vorhanden
+    db.Database.EnsureCreated();
     Console.WriteLine("✅ Database ready!");
 }
 
@@ -63,44 +55,67 @@ using (var scope = app.Services.CreateScope())
 // Middleware Pipeline
 // ==========================================
 
+var isDevelopment = app.Environment.IsDevelopment();
 
 app.UseCors("AllowAll");
 
-app.UseAuthorization();
+// Static Files für Production (Frontend in wwwroot)
+if (!isDevelopment)
+{
+    app.UseDefaultFiles();
+    app.UseStaticFiles();
+}
 
+app.UseAuthorization();
 app.MapControllers();
 
+// SPA Fallback für Production (alle unbekannten Routes → index.html)
+if (!isDevelopment)
+{
+    app.MapFallbackToFile("index.html");
+}
+
 // ==========================================
-// Welcome Message & Browser Auto-Open
+// Startup Info & Browser Auto-Open
 // ==========================================
 
+var port = isDevelopment ? 5181 : 5000;
+var appUrl = $"http://localhost:{port}";
 
-var appUrl = "http://localhost:5181";
-string frontendUrl = "http://localhost:5173";
-
+Console.WriteLine();
 Console.WriteLine("╔══════════════════════════════════════════╗");
 Console.WriteLine("║   🚀 RocketMoon App 🌙                  ║");
 Console.WriteLine("╚══════════════════════════════════════════╝");
 Console.WriteLine($"📡 Server: {appUrl}");
 Console.WriteLine($"💾 Database: {Path.GetFullPath("rocketmoon.db")}");
-Console.WriteLine($"🌐 Browser öffnet automatisch...");
-Console.WriteLine();
+Console.WriteLine($"🔧 Mode: {(isDevelopment ? "Development" : "Production")}");
 
-// Öffne Browser automatisch
-await Task.Run(async () =>
+if (isDevelopment)
 {
-    await Task.Delay(1500); // Warte kurz bis Server bereit
-    try
+    Console.WriteLine($"🌐 Frontend: http://localhost:5173 (Vite dev server)");
+}
+else
+{
+    Console.WriteLine($"🌐 Browser öffnet automatisch...");
+
+    // Auto-open browser in Production
+    _ = Task.Run(async () =>
     {
-        OpenBrowser(frontendUrl);
-        Console.WriteLine("✅ Browser geöffnet!");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"⚠️ Browser konnte nicht automatisch geöffnet werden: {ex.Message}");
-        Console.WriteLine($"   Öffne manuell: {frontendUrl}");
-    }
-});
+        await Task.Delay(1500);
+        try
+        {
+            OpenBrowser(appUrl);
+            Console.WriteLine("✅ Browser geöffnet!");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"⚠️ Browser konnte nicht geöffnet werden: {ex.Message}");
+            Console.WriteLine($"   Öffne manuell: {appUrl}");
+        }
+    });
+}
+
+Console.WriteLine();
 
 app.Run();
 
@@ -110,27 +125,16 @@ app.Run();
 
 static void OpenBrowser(string url)
 {
-    try
+    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
     {
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
-        }
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-        {
-            Process.Start("xdg-open", url);
-        }
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-        {
-            Process.Start("open", url);
-        }
+        Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
     }
-    catch
+    else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
     {
-        // Fallback: cmd /c start (Windows only)
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
-        }
+        Process.Start("xdg-open", url);
+    }
+    else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+    {
+        Process.Start("open", url);
     }
 }
