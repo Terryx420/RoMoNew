@@ -6,7 +6,7 @@ import type {
 } from '../types/chart.types';
 
 // Backend URL - Automatische Erkennung
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'http://localhost:5181/api';
 
 console.log('🔧 API Base URL:', API_BASE_URL);
 
