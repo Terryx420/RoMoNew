@@ -1,6 +1,0 @@
-@RoMo.Server_HostAddress = http://localhost:5181
-
-GET {{RoMo.Server_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

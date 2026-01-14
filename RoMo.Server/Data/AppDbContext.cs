@@ -41,10 +41,6 @@ namespace RoMo.Server.Data
             });
         }
 
-        internal async Task SaveChangesAsync()
-        {
-            throw new NotImplementedException();
-        }
     }
 
 }
