@@ -66,24 +66,17 @@ using (var scope = app.Services.CreateScope())
 
 app.UseCors("AllowAll");
 
-// Static Files für Frontend (wwwroot)
-app.UseDefaultFiles();
-app.UseStaticFiles();
-
 app.UseAuthorization();
 
 app.MapControllers();
-
-// Fallback für SPA (alle anderen Routes → index.html)
-app.MapFallbackToFile("index.html");
 
 // ==========================================
 // Welcome Message & Browser Auto-Open
 // ==========================================
 
 
-var appUrl = "http://localhost:5000";
-string frontendUrl = "http://localhost:54231";
+var appUrl = "http://localhost:5181";
+string frontendUrl = "http://localhost:5173";
 
 Console.WriteLine("╔══════════════════════════════════════════╗");
 Console.WriteLine("║   🚀 RocketMoon App 🌙                  ║");
