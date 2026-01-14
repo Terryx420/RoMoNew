@@ -53,12 +53,12 @@ public class LaunchStatusDistribution
 public class LaunchTimelinePoint
 {
     /// <summary>
-    /// Monat (für X-Achse) - z.B. "Jan", "Feb", "Mar"
+    /// Monat (für X-Achse) - "Jan", "Feb", "Mar"
     /// </summary>
     public string Month { get; set; } = string.Empty;
     
     /// <summary>
-    /// Monatsnummer (1-12) - für Sortierung
+    /// Monatsnummer (1-12)
     /// </summary>
     public int MonthNumber { get; set; }
     

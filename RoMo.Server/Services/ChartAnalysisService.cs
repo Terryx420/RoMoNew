@@ -8,7 +8,6 @@ namespace RoMo.Server.Services;
 
 /// <summary>
 /// Service zur Analyse von Launch- und Mondphasen-Daten für Charts
-/// KISS-Prinzip: Einfache, verständliche Methoden
 /// </summary>
 public class ChartAnalysisService
 {
@@ -28,7 +27,7 @@ public class ChartAnalysisService
     {
         const string chartType = "moon-phase-success";
 
-        // Erst im Cache nachschauen
+        // Schon im Cache gespeichert?
         var cached = await GetFromCacheAsync<MoonPhaseSuccessChartDTO>(year, chartType);
         if (cached != null)
         {
@@ -210,10 +209,7 @@ public class ChartAnalysisService
 
         return result;
     }
-
-    // ==========================================
-    // Hilfsmethoden
-    // ==========================================
+    
 
     /// <summary>
     /// Findet die nächste Mondphase zum gegebenen Datum
@@ -236,9 +232,6 @@ public class ChartAnalysisService
         return Math.Round((decimal)successful / total * 100, 1);
     }
 
-    /// <summary>
-    /// Formatiert MoonPhase Enum zu lesbarem String
-    /// </summary>
     private string FormatMoonPhase(MoonPhase phase)
     {
         return phase switch
@@ -250,10 +243,7 @@ public class ChartAnalysisService
             _ => phase.ToString()
         };
     }
-
-    /// <summary>
-    /// Formatiert LaunchStatus Enum zu lesbarem String
-    /// </summary>
+    
     private string FormatStatus(LaunchStatus status)
     {
         return status switch
@@ -280,18 +270,12 @@ public class ChartAnalysisService
             _ => 5
         };
     }
-
-    /// <summary>
-    /// Gibt den Monatsnamen zurück (Jan, Feb, Mar, ...)
-    /// </summary>
+    
     private string GetMonthName(int month)
     {
         return CultureInfo.GetCultureInfo("de-DE").DateTimeFormat.GetAbbreviatedMonthName(month);
     }
-
-    // ==========================================
-    // Cache-Methoden (KISS: Einfach JSON in DB)
-    // ==========================================
+    
 
     /// <summary>
     /// Holt Chart-Daten aus dem Cache

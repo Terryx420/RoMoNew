@@ -2,10 +2,6 @@ using System.Text.Json.Serialization;
 
 namespace RoMo.Server.DTOs;
 
-// ============================================
-// Launch Library 2 API Response Models
-// ============================================
-
 /// <summary>
 /// Root Response von Launch Library 2 API
 /// Endpoint: https://ll.thespacedevs.com/2.2.0/launch/?limit=100
@@ -76,9 +72,7 @@ public class RocketConfiguration
     public string Name { get; set; } = string.Empty;
 }
 
-// ============================================
-// USNO Navy Moon API Response Models
-// ============================================
+
 
 /// <summary>
 /// Root Response von USNO Navy Moon API

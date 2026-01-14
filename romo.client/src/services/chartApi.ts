@@ -13,9 +13,7 @@ const API_BASE_URL = isDevelopment
 
 console.log('🔧 API Base URL:', API_BASE_URL, isDevelopment ? '(Development)' : '(Production)');
 
-/**
- * Simple fetch wrapper - KISS!
- */
+
 async function apiCall<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const url = `${API_BASE_URL}${endpoint}`;
   console.log(`📤 ${options?.method || 'GET'} ${url}`);
@@ -59,7 +57,6 @@ export const chartApi = {
   /**
    * Initialisiert die Daten für ein Jahr
    * Muss VOR den Chart-Requests aufgerufen werden!
-   * ⚠️ Kann 10-60 Sekunden dauern! (Externe APIs)
    */
   initializeData: async (year: number): Promise<InitResponse> => {
     console.log(`🚀 Initializing data for year ${year}...`);

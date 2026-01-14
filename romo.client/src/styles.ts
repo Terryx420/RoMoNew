@@ -2,7 +2,6 @@ import type { CSSProperties } from 'react';
 
 /**
  * Zentrale Style-Konstanten für die RocketMoon App
- * KISS-Prinzip: Einfache, wiederverwendbare Styles
  */
 
 // ============================================

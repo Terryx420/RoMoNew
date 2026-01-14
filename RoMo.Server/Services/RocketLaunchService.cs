@@ -26,7 +26,7 @@ public class RocketLaunchService
     
     /// <summary>
     /// Holt verfügbare Jahre von Launch Library 2
-    /// Findet ältesten und neuesten Launch → Range erstellen
+    /// Findet ältesten Launch und das aktuelle Jahr → Range erstellen
     /// </summary>
     public async Task<List<int>> GetAvailableYearsAsync()
     {
@@ -47,7 +47,7 @@ public class RocketLaunchService
                 .OrderByDescending(y => y) // Neueste zuerst
                 .ToList();
 
-            _logger.LogInformation("✅ Available years: {OldestYear} - {NewestYear} ({Count} years)", 
+            _logger.LogInformation("Available years: {OldestYear} - {NewestYear} ({Count} years)", 
                 oldestYear, currentYear, years.Count);
 
             return years;
@@ -78,7 +78,7 @@ public class RocketLaunchService
             return existingData;
         }
 
-        // Optimierte API URL - nur orbitale Starts, nur benötigte Felder
+        
         var startDate = new DateTime(year, 1, 1).ToString("yyyy-MM-dd");
         var endDate = new DateTime(year, 12, 31).ToString("yyyy-MM-dd");
         var initialUrl = $"https://ll.thespacedevs.com/2.2.0/launch/" +
@@ -132,7 +132,7 @@ public class RocketLaunchService
             {
                 await _context.RocketLaunches.AddRangeAsync(allLaunches);
                 await _context.SaveChangesAsync();
-                _logger.LogInformation("✅ Saved {Count} launches from {Pages} pages for {Year}", 
+                _logger.LogInformation("Saved {Count} launches from {Pages} pages for {Year}", 
                     allLaunches.Count, pageCount, year);
             }
 
@@ -146,9 +146,7 @@ public class RocketLaunchService
     }
 
     /// <summary>
-    /// Mapped den Status-String von der API zu unserem Enum
-    /// Launch Library 2 Status IDs:
-    /// 1 = Go, 2 = TBD, 3 = Success, 4 = Failure, 5 = Hold, 6 = In Flight, 7 = Partial Failure
+    /// Mapped den Status-String von der API zu unser Enum
     /// </summary>
     private LaunchStatus MapStatusToEnum(string statusName)
     {
@@ -161,16 +159,5 @@ public class RocketLaunchService
         };
     }
 
-    /// <summary>
-    /// Gibt die Launches für ein Jahr aus der DB zurück
-    /// </summary>
-    public async Task<List<RocketLaunch>> GetLaunchesForYearAsync(int year)
-    {
-        return await Task.FromResult(
-            _context.RocketLaunches
-                .Where(l => l.LaunchDate.Year == year)
-                .OrderBy(l => l.LaunchDate)
-                .ToList()
-        );
-    }
+    
 }

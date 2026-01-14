@@ -6,7 +6,7 @@ using RoMo.Server.Services;
 namespace RoMo.Server.Controllers;
 
 /// <summary>
-/// Chart-Controller - Hauptschnittstelle zum Frontend
+/// Chart-Controller - Schnittstelle zum Frontend
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]

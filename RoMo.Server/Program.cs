@@ -39,21 +39,15 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// ==========================================
-// Database Initialization
-// ==========================================
 
-Console.WriteLine("🚀 Initializing RocketMoon Database...");
+Console.WriteLine("Initializing RocketMoon Database...");
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.EnsureCreated();
-    Console.WriteLine("✅ Database ready!");
+    Console.WriteLine("Database ready!");
 }
 
-// ==========================================
-// Middleware Pipeline
-// ==========================================
 
 var isDevelopment = app.Environment.IsDevelopment();
 
@@ -69,11 +63,6 @@ if (!isDevelopment)
 app.UseAuthorization();
 app.MapControllers();
 
-// SPA Fallback für Production (alle unbekannten Routes → index.html)
-if (!isDevelopment)
-{
-    app.MapFallbackToFile("index.html");
-}
 
 // ==========================================
 // Startup Info & Browser Auto-Open
@@ -84,7 +73,7 @@ var appUrl = $"http://localhost:{port}";
 
 Console.WriteLine();
 Console.WriteLine("╔══════════════════════════════════════════╗");
-Console.WriteLine("║   🚀 RocketMoon App 🌙                  ║");
+Console.WriteLine("║   🚀 RocketMoon App 🌙                   ║");
 Console.WriteLine("╚══════════════════════════════════════════╝");
 Console.WriteLine($"📡 Server: {appUrl}");
 Console.WriteLine($"💾 Database: {Path.GetFullPath("rocketmoon.db")}");
@@ -119,9 +108,6 @@ Console.WriteLine();
 
 app.Run();
 
-// ==========================================
-// Helper: Browser öffnen (Cross-Platform)
-// ==========================================
 
 static void OpenBrowser(string url)
 {

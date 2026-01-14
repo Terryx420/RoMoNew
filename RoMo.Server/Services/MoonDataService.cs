@@ -29,7 +29,7 @@ public class MoonDataService
     /// </summary>
     public async Task<List<MoonData>> FetchAndSaveMoonPhasesAsync(int year)
     {
-        // Prüfe ob Daten bereits in DB existieren
+        
         var existingData = _context.MoonPhases
             .Where(m => m.Year == year)
             .ToList();
@@ -40,7 +40,7 @@ public class MoonDataService
             return existingData;
         }
 
-        // Fetch von API
+        
         var url = $"https://aa.usno.navy.mil/api/moon/phases/year?year={year}";
         _logger.LogInformation("Fetching moon phases from: {Url}", url);
 
@@ -65,7 +65,7 @@ public class MoonDataService
                 })
                 .ToList();
 
-            // Speichere in DB
+            
             await _context.MoonPhases.AddRangeAsync(moonPhases);
             await _context.SaveChangesAsync();
 
@@ -87,7 +87,7 @@ public class MoonDataService
     }
 
     /// <summary>
-    /// Mapped den Phase-String von der API zu unserem Enum
+    /// Mapped den Phase-String von der API zu unser Enum
     /// </summary>
     private MoonPhase MapPhaseStringToEnum(string phaseString)
     {
@@ -100,17 +100,5 @@ public class MoonDataService
             _ => throw new ArgumentException($"Unknown moon phase: {phaseString}")
         };
     }
-
-    /// <summary>
-    /// Gibt die Mondphasen für ein Jahr aus der DB zurück
-    /// </summary>
-    public async Task<List<MoonData>> GetMoonPhasesForYearAsync(int year)
-    {
-        return await Task.FromResult(
-            _context.MoonPhases
-                .Where(m => m.Year == year)
-                .OrderBy(m => m.Date)
-                .ToList()
-        );
-    }
+    
 }
