@@ -2,6 +2,7 @@ using RoMo.Server.Data;
 using RoMo.Server.DTOs;
 using RoMo.Server.Models;
 using System.Globalization;
+using System.Text.Json;
 
 namespace RoMo.Server.Services;
 
@@ -25,7 +26,17 @@ public class ChartAnalysisService
     /// </summary>
     public async Task<MoonPhaseSuccessChartDTO> GetSuccessRateByMoonPhaseAsync(int year)
     {
-        _logger.LogInformation("Calculating success rate by moon phase for year {Year}", year);
+        const string chartType = "moon-phase-success";
+
+        // Erst im Cache nachschauen
+        var cached = await GetFromCacheAsync<MoonPhaseSuccessChartDTO>(year, chartType);
+        if (cached != null)
+        {
+            _logger.LogInformation("Cache hit for {ChartType} year {Year}", chartType, year);
+            return cached;
+        }
+
+        _logger.LogInformation("Cache miss - Calculating success rate by moon phase for year {Year}", year);
 
         // 1. Hole alle Launches des Jahres
         var launches = _context.RocketLaunches
@@ -41,14 +52,14 @@ public class ChartAnalysisService
 
         if (!launches.Any() || !moonPhases.Any())
         {
-            _logger.LogWarning("No data found for year {Year}. Launches: {LC}, MoonPhases: {MC}", 
+            _logger.LogWarning("No data found for year {Year}. Launches: {LC}, MoonPhases: {MC}",
                 year, launches.Count, moonPhases.Count);
-            return new MoonPhaseSuccessChartDTO 
-            { 
-                ChartType = "bar", 
+            return new MoonPhaseSuccessChartDTO
+            {
+                ChartType = "bar",
                 Year = year,
                 Title = "Erfolgsrate pro Mondphase",
-                Data = new List<MoonPhaseSuccessRate>() 
+                Data = new List<MoonPhaseSuccessRate>()
             };
         }
 
@@ -77,13 +88,18 @@ public class ChartAnalysisService
 
         _logger.LogInformation("Success rate calculation complete. Found {Count} moon phases with data", data.Count);
 
-        return await Task.FromResult(new MoonPhaseSuccessChartDTO
+        var result = new MoonPhaseSuccessChartDTO
         {
             ChartType = "bar",
             Year = year,
             Title = "Erfolgsrate pro Mondphase",
             Data = data
-        });
+        };
+
+        // Im Cache speichern
+        await SaveToCacheAsync(year, chartType, result);
+
+        return result;
     }
 
     /// <summary>
@@ -91,7 +107,17 @@ public class ChartAnalysisService
     /// </summary>
     public async Task<LaunchStatusChartDTO> GetLaunchStatusDistributionAsync(int year)
     {
-        _logger.LogInformation("Calculating launch status distribution for year {Year}", year);
+        const string chartType = "launch-status";
+
+        // Erst im Cache nachschauen
+        var cached = await GetFromCacheAsync<LaunchStatusChartDTO>(year, chartType);
+        if (cached != null)
+        {
+            _logger.LogInformation("Cache hit for {ChartType} year {Year}", chartType, year);
+            return cached;
+        }
+
+        _logger.LogInformation("Cache miss - Calculating launch status distribution for year {Year}", year);
 
         var launches = _context.RocketLaunches
             .Where(l => l.LaunchDate.Year == year)
@@ -124,13 +150,18 @@ public class ChartAnalysisService
 
         _logger.LogInformation("Status distribution complete. Total launches: {Total}", totalLaunches);
 
-        return await Task.FromResult(new LaunchStatusChartDTO
+        var result = new LaunchStatusChartDTO
         {
             ChartType = "pie",
             Year = year,
             Title = "Launch-Status Verteilung",
             Data = data
-        });
+        };
+
+        // Im Cache speichern
+        await SaveToCacheAsync(year, chartType, result);
+
+        return result;
     }
 
     /// <summary>
@@ -138,7 +169,17 @@ public class ChartAnalysisService
     /// </summary>
     public async Task<LaunchTimelineChartDTO> GetLaunchTimelineAsync(int year)
     {
-        _logger.LogInformation("Calculating launch timeline for year {Year}", year);
+        const string chartType = "launch-timeline";
+
+        // Erst im Cache nachschauen
+        var cached = await GetFromCacheAsync<LaunchTimelineChartDTO>(year, chartType);
+        if (cached != null)
+        {
+            _logger.LogInformation("Cache hit for {ChartType} year {Year}", chartType, year);
+            return cached;
+        }
+
+        _logger.LogInformation("Cache miss - Calculating launch timeline for year {Year}", year);
 
         var launches = _context.RocketLaunches
             .Where(l => l.LaunchDate.Year == year)
@@ -156,13 +197,18 @@ public class ChartAnalysisService
 
         _logger.LogInformation("Timeline calculation complete. Total launches: {Total}", launches.Count);
 
-        return await Task.FromResult(new LaunchTimelineChartDTO
+        var result = new LaunchTimelineChartDTO
         {
             ChartType = "line",
             Year = year,
             Title = "Raketen-Starts pro Monat",
             Data = data
-        });
+        };
+
+        // Im Cache speichern
+        await SaveToCacheAsync(year, chartType, result);
+
+        return result;
     }
 
     // ==========================================
@@ -241,5 +287,69 @@ public class ChartAnalysisService
     private string GetMonthName(int month)
     {
         return CultureInfo.GetCultureInfo("de-DE").DateTimeFormat.GetAbbreviatedMonthName(month);
+    }
+
+    // ==========================================
+    // Cache-Methoden (KISS: Einfach JSON in DB)
+    // ==========================================
+
+    /// <summary>
+    /// Holt Chart-Daten aus dem Cache
+    /// </summary>
+    private async Task<T?> GetFromCacheAsync<T>(int year, string chartType) where T : class
+    {
+        var cache = _context.ChartCache
+            .FirstOrDefault(c => c.Year == year && c.ChartType == chartType);
+
+        if (cache == null)
+            return null;
+
+        try
+        {
+            return JsonSerializer.Deserialize<T>(cache.JsonData);
+        }
+        catch (JsonException ex)
+        {
+            _logger.LogWarning(ex, "Failed to deserialize cache for {ChartType} year {Year}", chartType, year);
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Speichert Chart-Daten im Cache
+    /// </summary>
+    private async Task SaveToCacheAsync<T>(int year, string chartType, T data)
+    {
+        try
+        {
+            var json = JsonSerializer.Serialize(data);
+
+            // Prüfen ob schon existiert (Update) oder neu (Insert)
+            var existing = _context.ChartCache
+                .FirstOrDefault(c => c.Year == year && c.ChartType == chartType);
+
+            if (existing != null)
+            {
+                existing.JsonData = json;
+                existing.CreatedAt = DateTime.UtcNow;
+            }
+            else
+            {
+                _context.ChartCache.Add(new ChartCache
+                {
+                    Year = year,
+                    ChartType = chartType,
+                    JsonData = json,
+                    CreatedAt = DateTime.UtcNow
+                });
+            }
+
+            await _context.SaveChangesAsync();
+            _logger.LogInformation("Saved cache for {ChartType} year {Year}", chartType, year);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to save cache for {ChartType} year {Year}", chartType, year);
+        }
     }
 }

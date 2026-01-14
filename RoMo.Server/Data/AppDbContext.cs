@@ -15,6 +15,7 @@ namespace RoMo.Server.Data
 
         public DbSet<RocketLaunch> RocketLaunches => Set<RocketLaunch>();
         public DbSet<MoonData> MoonPhases => Set<MoonData>();
+        public DbSet<ChartCache> ChartCache => Set<ChartCache>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -38,6 +39,15 @@ namespace RoMo.Server.Data
                 entity.Property(e => e.Phase).HasConversion<string>(); // Store enum as string
                 entity.HasIndex(e => e.Date); // Index für Performance
                 entity.HasIndex(e => e.Year); // Index für Jahr-Queries
+            });
+
+            // ChartCache Configuration
+            modelBuilder.Entity<ChartCache>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.ChartType).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.JsonData).IsRequired();
+                entity.HasIndex(e => new { e.Year, e.ChartType }).IsUnique(); // Ein Cache pro Jahr und ChartType
             });
         }
 
