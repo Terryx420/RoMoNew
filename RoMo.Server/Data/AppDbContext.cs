@@ -30,12 +30,7 @@ namespace RoMo.Server.Data
                 entity.Property(e => e.RocketType).HasMaxLength(100);
                 entity.Property(e => e.Status).HasConversion<string>(); // Store enum as string
                 entity.HasIndex(e => e.LaunchDate); // Index für Performance
-
-                // N:1 Beziehung: Viele RocketLaunches -> eine MoonPhase
-                entity.HasOne(e => e.NearestMoonPhase)
-                    .WithMany(m => m.RocketLaunches)
-                    .HasForeignKey(e => e.NearestMoonPhaseId)
-                    .OnDelete(DeleteBehavior.SetNull); // Bei Löschung der MoonPhase -> FK auf NULL
+                entity.HasIndex(e => e.NearestMoonPhaseId); // Index für FK
             });
 
             // MoonData Configuration

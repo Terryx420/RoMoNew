@@ -22,9 +22,4 @@ public class MoonData
     /// Jahr (für schnellere Queries)
     /// </summary>
     public int Year { get; set; }
-
-    /// <summary>
-    /// Navigationseigenschaft - alle Raketenstarts nahe dieser Mondphase (1:N)
-    /// </summary>
-    public ICollection<RocketLaunch> RocketLaunches { get; set; } = new List<RocketLaunch>();
 }

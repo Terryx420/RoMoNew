@@ -41,9 +41,4 @@ public class RocketLaunch
     /// Fremdschlüssel zur nächsten Mondphase (N:1 Beziehung)
     /// </summary>
     public int? NearestMoonPhaseId { get; set; }
-
-    /// <summary>
-    /// Navigationseigenschaft zur Mondphase
-    /// </summary>
-    public MoonData? NearestMoonPhase { get; set; }
 }
