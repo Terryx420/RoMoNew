@@ -30,6 +30,7 @@ namespace RoMo.Server.Data
                 entity.Property(e => e.RocketType).HasMaxLength(100);
                 entity.Property(e => e.Status).HasConversion<string>(); // Store enum as string
                 entity.HasIndex(e => e.LaunchDate); // Index für Performance
+                entity.HasIndex(e => e.MoonPhaseId); // Index für FK
             });
 
             // MoonData Configuration

@@ -36,4 +36,9 @@ public class RocketLaunch
     /// Launch Library 2 ID (für Referenz)
     /// </summary>
     public string? ExternalId { get; set; }
+
+    /// <summary>
+    /// Fremdschlüssel zur Mondphase (N:1 Beziehung)
+    /// </summary>
+    public int? MoonPhaseId { get; set; }
 }
