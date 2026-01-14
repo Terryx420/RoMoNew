@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { MoonPhaseSuccessChart } from './components/MoonPhaseSuccessChart';
 import { LaunchStatusChart } from './components/LaunchStatusChart';
 import { LaunchTimelineChart } from './components/LaunchTimelineChart';
